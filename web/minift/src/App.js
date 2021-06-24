@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ethers } from 'ethers'
 import Token from './artifacts/contracts/Token.sol/Token.json'
 
-const tokenAddress = "0x748Deb4f9d998D6A02AFA0a8725d882b8F87aa78"
+const tokenAddress = "0x934c09b2990Efe124371549a6d4Aea8EB71108fe"
 
 function App() {
 
@@ -26,7 +26,7 @@ function App() {
       try {
         const data = await contract.balanceOf(userAddress)
         console.log('data: ', data)
-        setBalance(data.toNumber())
+        setBalance(data.toString())
       } catch (err) {
         console.log("Error: ", err)
       }

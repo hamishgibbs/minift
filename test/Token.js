@@ -51,7 +51,7 @@ describe("Token contract", function() {
 
       await expect(
         hardhatToken.connect(addr1).transfer(owner.address, 1)
-      ).to.be.revertedWith("Not enough tokens");
+      ).to.be.revertedWith("ERC20: transfer amount exceeds balance");
 
       expect(await hardhatToken.balanceOf(owner.address)).to.equal(
         initialOwnerBalance
@@ -65,7 +65,7 @@ describe("Token contract", function() {
       await hardhatToken.transfer(addr2.address, 50);
 
       const finalOwnerBalance = await hardhatToken.balanceOf(owner.address);
-      expect(finalOwnerBalance).to.equal(initialOwnerBalance - 150);
+      expect(finalOwnerBalance).to.equal(initialOwnerBalance.sub(150));
 
       const addr1Balance = await hardhatToken.balanceOf(addr1.address);
       expect(addr1Balance).to.equal(100);
@@ -76,4 +76,41 @@ describe("Token contract", function() {
     })
 
   })
+
+  describe("Burning", function () {
+
+    it("Should burn tokens and reduce total supply", async function () {
+      const initialOwnerBalance = await hardhatToken.balanceOf(owner.address);
+      const initialTotalSupply = await hardhatToken.totalSupply();
+
+      await hardhatToken.burn(100);
+
+      const finalOwnerBalance = await hardhatToken.balanceOf(owner.address);
+      expect(finalOwnerBalance).to.equal(initialOwnerBalance.sub(100));
+
+      const finalTotalSupply = await hardhatToken.totalSupply();
+      expect(finalTotalSupply).to.equal(initialTotalSupply.sub(100));
+
+    })
+
+  })
+
+  describe("Minting", function () {
+
+    it("Should mint tokens and increase total supply", async function () {
+      const initialAddr1Balance = await hardhatToken.balanceOf(addr1.address);
+      const initialTotalSupply = await hardhatToken.totalSupply();
+
+      await hardhatToken.mint(addr1.address, 100);
+
+      const finalAddr1Balance = await hardhatToken.balanceOf(addr1.address);
+      expect(finalAddr1Balance).to.equal(initialAddr1Balance.add(100));
+
+      const finalTotalSupply = await hardhatToken.totalSupply();
+      expect(finalTotalSupply).to.equal(initialTotalSupply.add(100));
+
+    })
+
+  })
+
 });

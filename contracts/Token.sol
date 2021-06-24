@@ -1,42 +1,17 @@
-# Ropsten Address
-pragma solidity ^0.7.0;
+pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract Token {
 
-  string public name = "minift";
-  string public symbol = "MHT";
+contract Token is ERC20, ERC20Burnable, Ownable {
+    constructor() ERC20("TestToken", "TTK") {
+        _mint(msg.sender, 1000000 * 10 ** decimals());
+    }
 
-  uint256 public totalSupply = 1000000;
-
-  address public owner;
-
-  mapping(address => uint256) balances;
-
-  /// @notice Executed when the contract is deployed
-  constructor() {
-    /// @notice Executed when the contract is deployed
-    balances[msg.sender] = totalSupply;
-    owner = msg.sender;
-  }
-
-  /// @notice Allows transferring of tokens
-  function transfer(address to, uint256 amount) external {
-
-    console.log("Sender balance is %s tokens", balances[msg.sender]);
-    console.log("Trying to send %s tokens to %s", amount, to);
-
-    /// Check that sender has enough tokens
-    require(balances[msg.sender] >= amount, "Not enough tokens");
-
-    // Transfer the requested amount of tokens
-    balances[msg.sender] -= amount;
-    balances[to] += amount;
-  }
-
-  /// @notice Get balances of an account
-  function balanceOf(address account) external view returns (uint256) {
-    return balances[account];
-  }
+    function mint(address to, uint256 amount) public onlyOwner {
+        _mint(to, amount);
+    }
 }
